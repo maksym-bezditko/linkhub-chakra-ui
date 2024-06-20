@@ -1,95 +1,85 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+import { authOptions } from "@/lib/authOptions";
+import { Box, Button, Container, Flex, Heading } from "@chakra-ui/react";
+import { getServerSession } from "next-auth";
+import Link from "next/link";
+import BLANK_POST_IMAGE from "@/public/posts/example.jpg";
+import { Post } from "@/components/post";
+import { Post as PostType } from "@/types/responses";
 
-export default function Home() {
+const MOCK_POST: PostType[] = [
+  {
+    id: 1,
+    location: "Kharkiv",
+    postImage: BLANK_POST_IMAGE.src,
+    caption: "lorem isasdsav j n klsjdnv nkjasdn kjnasldkj lkjdnajs sd",
+  },
+
+  {
+    id: 2,
+    location: "Kharkiv",
+    postImage: BLANK_POST_IMAGE.src,
+    caption: "lorem isasdsav j n klsjdnv nkjasdn kjnasldkj lkjdnajs sd",
+  },
+
+  {
+    id: 3,
+    location: "Kharkiv",
+    postImage: BLANK_POST_IMAGE.src,
+    caption: "lorem isasdsav j n klsjdnv nkjasdn kjnasldkj lkjdnajs sd",
+  },
+
+  {
+    id: 4,
+    location: "Kharkiv",
+    postImage: BLANK_POST_IMAGE.src,
+    caption: "lorem isasdsav j n klsjdnv nkjasdn kjnasldkj lkjdnajs sd",
+  },
+];
+
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+
+  const isLoggedIn = Boolean(session?.user);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <Container maxW="container.lg">
+      <Box p={8}>
+        <Heading as="h1" size="xl" mb={20}>
+          Feed
+        </Heading>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+        {isLoggedIn ? (
+          <Flex flexDirection="column" alignItems="center" gap={16}>
+            {MOCK_POST.map((item) => (
+              <Post
+                key={item.id}
+                post={item}
+                ownerNickname={session?.user.nickname || ""}
+              />
+            ))}
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+            <Link href="/my-profile">
+              <Button mt={4} colorScheme="teal">
+                Go to my profile{" "}
+              </Button>
+            </Link>
+          </Flex>
+        ) : (
+          <Flex gap={4}>
+            <Link href="/login">
+              <Button mt={4} colorScheme="teal">
+                Log in
+              </Button>
+            </Link>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+            <Link href="/signup">
+              <Button mt={4} colorScheme="yellow">
+                Sign up
+              </Button>
+            </Link>
+          </Flex>
+        )}
+      </Box>
+    </Container>
+  );
 }
